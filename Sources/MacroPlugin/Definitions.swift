@@ -129,6 +129,263 @@ struct Codable: MemberMacro, ExtensionMacro {
         )
     }
 }
+
+/// Attribute type for `Codable` macro-attribute.
+///
+/// Uses `PluginCore`'s `Codable` attribute implementation.
+///
+/// Describes a macro that validates `Codable` macro usage
+/// and generates `Codable` conformances and implementations.
+///
+/// This macro performs extension macro expansion depending on `Codable`
+/// conformance of type:
+///   * Extension macro expansion, to confirm to `Decodable` or `Encodable`
+///     protocols depending on whether type doesn't already conform to `Decodable`
+///     or `Encodable` respectively.
+///   * Extension macro expansion, to generate custom `CodingKey` type for
+///     the attached declaration named `CodingKeys` and use this type for
+///     `Codable` implementation of both `init(from:)` and `encode(to:)`
+///     methods.
+///   * If attached declaration already conforms to `Codable` this macro expansion
+///     is skipped.
+struct DecodableMacro: MemberMacro, ExtensionMacro {
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached `class`.
+    ///
+    /// Conformance for both `Decodable` and `Encodable` is generated regardless
+    /// of whether class already conforms to any. Class or its super class
+    /// shouldn't conform to `Decodable` or `Encodable`
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Declarations of `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
+    ///
+    /// - Note: For types other than `class` types no declarations generated.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.DecodableMacro.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached `class`.
+    ///
+    /// Depending on whether attached type already conforms to `Decodable`
+    /// or `Encodable`, `Decodable` or `Encodable` conformance
+    /// implementation is skipped. Entire macro expansion is skipped if attached
+    /// type already conforms to both `Decodable` and`Encodable`.
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Declarations of `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
+    ///
+    /// - Note: For types other than `class` types no declarations generated.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.DecodableMacro.expansion(
+            of: node, providingMembersOf: declaration,
+            conformingTo: protocols, in: context
+        )
+    }
+
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached `struct` or `class`.
+    ///
+    /// Depending on whether attached type already conforms to `Decodable`
+    /// or `Encodable` extension for `Decodable` or `Encodable` conformance
+    /// implementation is skipped. Entire macro expansion is skipped if attached
+    /// type already conforms to both `Decodable` and`Encodable`.
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - type: The type to provide extensions of.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Extensions with `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
+    ///
+    /// - Note: For `class` types only conformance is generated,
+    ///   member expansion generates the actual implementation.
+    static func expansion(
+        of node: AttributeSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+        return try PluginCore.DecodableMacro.expansion(
+            of: node, attachedTo: declaration, providingExtensionsOf: type,
+            conformingTo: protocols + [.encodableProtocol], in: context
+        )
+    }
+}
+
+/// Attribute type for `Codable` macro-attribute.
+///
+/// Uses `PluginCore`'s `Codable` attribute implementation.
+///
+/// Describes a macro that validates `Codable` macro usage
+/// and generates `Codable` conformances and implementations.
+///
+/// This macro performs extension macro expansion depending on `Codable`
+/// conformance of type:
+///   * Extension macro expansion, to confirm to `Decodable` or `Encodable`
+///     protocols depending on whether type doesn't already conform to `Decodable`
+///     or `Encodable` respectively.
+///   * Extension macro expansion, to generate custom `CodingKey` type for
+///     the attached declaration named `CodingKeys` and use this type for
+///     `Codable` implementation of both `init(from:)` and `encode(to:)`
+///     methods.
+///   * If attached declaration already conforms to `Codable` this macro expansion
+///     is skipped.
+struct EncodableMacro: MemberMacro, ExtensionMacro {
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached `class`.
+    ///
+    /// Conformance for both `Decodable` and `Encodable` is generated regardless
+    /// of whether class already conforms to any. Class or its super class
+    /// shouldn't conform to `Decodable` or `Encodable`
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Declarations of `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
+    ///
+    /// - Note: For types other than `class` types no declarations generated.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.EncodableMacro.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached `class`.
+    ///
+    /// Depending on whether attached type already conforms to `Decodable`
+    /// or `Encodable`, `Decodable` or `Encodable` conformance
+    /// implementation is skipped. Entire macro expansion is skipped if attached
+    /// type already conforms to both `Decodable` and`Encodable`.
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Declarations of `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
+    ///
+    /// - Note: For types other than `class` types no declarations generated.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.EncodableMacro.expansion(
+            of: node, providingMembersOf: declaration,
+            conformingTo: protocols, in: context
+        )
+    }
+
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached `struct` or `class`.
+    ///
+    /// Depending on whether attached type already conforms to `Decodable`
+    /// or `Encodable` extension for `Decodable` or `Encodable` conformance
+    /// implementation is skipped. Entire macro expansion is skipped if attached
+    /// type already conforms to both `Decodable` and`Encodable`.
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - type: The type to provide extensions of.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Extensions with `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
+    ///
+    /// - Note: For `class` types only conformance is generated,
+    ///   member expansion generates the actual implementation.
+    static func expansion(
+        of node: AttributeSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+        return try PluginCore.EncodableMacro.expansion(
+            of: node, attachedTo: declaration, providingExtensionsOf: type,
+            conformingTo: protocols, in: context
+        )
+    }
+}
+
 /// Attribute type for `MemberInit` macro-attribute.
 ///
 /// Uses `PluginCore`'s `MemberInit` attribute implementation.
@@ -607,4 +864,9 @@ struct UnTagged: PeerMacro {
             of: node, providingPeersOf: declaration, in: context
         )
     }
+}
+
+extension TypeSyntax {
+    static let encodableProtocol = TypeSyntax(stringLiteral: "Encodable")
+    static let decodableProtocol = TypeSyntax(stringLiteral: "Decodable")
 }

@@ -1,4 +1,4 @@
-import ArgumentParser
+@preconcurrency import ArgumentParser
 import Foundation
 import SwiftSyntax
 
@@ -18,6 +18,9 @@ struct ProtocolGen: AsyncParsableCommand {
     /// help text.
     ///
     /// All the new subcommands must be added to `subcommands` list.
+//    #if swift(>=6)
+//    @MainActor
+//    #endif
     static let configuration = CommandConfiguration(
         abstract: "A tool for generating protocol decoding/encoding syntax.",
         subcommands: [Fetch.self, Parse.self, Generate.self]
