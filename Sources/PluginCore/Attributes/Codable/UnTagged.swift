@@ -46,7 +46,8 @@ package struct UnTagged: PeerAttribute {
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             shouldNotDuplicate()
-            mustBeCombined(with: Codable.self)
+//            mustBeCombined(with: Codable.self)
+            mustBeCodable()
             cantBeCombined(with: CodedAt.self)
             expect(syntaxes: EnumDeclSyntax.self)
         }

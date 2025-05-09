@@ -165,7 +165,7 @@ struct CodedAsEnumTests {
                 .init(
                     id: CodedAs.misuseID,
                     message:
-                        "@CodedAs must be used in combination with @Codable",
+                        "@CodedAs must be used in combination with either @Codable, @Decodable or @Encodable",
                     line: 1, column: 1,
                     fixIts: [
                         .init(message: "Remove @CodedAs attribute")

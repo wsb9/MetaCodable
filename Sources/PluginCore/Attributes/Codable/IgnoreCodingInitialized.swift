@@ -45,7 +45,8 @@ package struct IgnoreCodingInitialized: PeerAttribute {
             shouldNotDuplicate()
             `if`(
                 isStruct || isClass || isEnum,
-                mustBeCombined(with: Codable.self),
+//                mustBeCombined(with: Codable.self),
+                mustBeCodable(),
                 else: expect(syntaxes: EnumCaseDeclSyntax.self)
             )
         }

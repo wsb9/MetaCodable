@@ -41,7 +41,8 @@ package struct ContentAt: PropertyAttribute {
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             expect(syntaxes: EnumDeclSyntax.self, ProtocolDeclSyntax.self)
-            mustBeCombined(with: Codable.self)
+//            self.mustBeCombined(with: Codable.self)
+            self.mustBeCodable()
             mustBeCombined(with: CodedAt.self)
             cantDuplicate()
         }

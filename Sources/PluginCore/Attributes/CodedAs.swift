@@ -70,7 +70,8 @@ package struct CodedAs: PropertyAttribute {
                     expect(
                         syntaxes: EnumDeclSyntax.self, ProtocolDeclSyntax.self
                     )
-                    mustBeCombined(with: Codable.self)
+//                    mustBeCombined(with: Codable.self)
+                    mustBeCodable()
                     mustBeCombined(with: CodedAt.self)
                 },
                 else: `if`(

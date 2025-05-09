@@ -28,7 +28,7 @@ struct CodingKeysTests {
                 .init(
                     id: CodingKeys.misuseID,
                     message:
-                        "@CodingKeys must be used in combination with @Codable",
+                        "@CodingKeys must be used in combination with either @Codable, @Decodable or @Encodable",
                     line: 1, column: 1,
                     fixIts: [
                         .init(

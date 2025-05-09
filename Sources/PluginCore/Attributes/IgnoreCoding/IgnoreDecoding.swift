@@ -49,7 +49,8 @@ package struct IgnoreDecoding: PropertyAttribute {
                 isVariable, attachedToInitializedVariable(),
                 else: `if`(
                     isStruct || isClass || isActor || isEnum || isProtocol,
-                    mustBeCombined(with: Codable.self),
+//                    mustBeCombined(with: Codable.self),
+                    mustBeCodable(),
                     else: expect(syntaxes: IgnoreCoding.ignorableDeclarations)
                 )
             )

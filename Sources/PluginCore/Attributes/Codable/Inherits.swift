@@ -60,7 +60,8 @@ package struct Inherits: PeerAttribute {
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             shouldNotDuplicate()
-            mustBeCombined(with: Codable.self)
+//            mustBeCombined(with: Codable.self)
+            mustBeCodable()
             expect(syntaxes: ClassDeclSyntax.self)
         }
     }

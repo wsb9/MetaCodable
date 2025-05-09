@@ -23,7 +23,7 @@ struct IgnoreInitializedTests {
                 .init(
                     id: IgnoreCodingInitialized.misuseID,
                     message:
-                        "@IgnoreCodingInitialized must be used in combination with @Codable",
+                        "@IgnoreCodingInitialized must be used in combination with either @Codable, @Decodable or @Encodable",
                     line: 1, column: 1,
                     fixIts: [
                         .init(

@@ -27,7 +27,7 @@ struct ContentAtTests {
                 .init(
                     id: ContentAt.misuseID,
                     message:
-                        "@ContentAt must be used in combination with @Codable",
+                        "@ContentAt must be used in combination with either @Codable, @Decodable or @Encodable",
                     line: 1, column: 1,
                     fixIts: [
                         .init(message: "Remove @ContentAt attribute")

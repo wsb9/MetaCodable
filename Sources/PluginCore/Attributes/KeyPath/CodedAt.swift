@@ -54,7 +54,8 @@ package struct CodedAt: PropertyAttribute {
             `if`(
                 isEnum || isProtocol,
                 AggregatedDiagnosticProducer {
-                    mustBeCombined(with: Codable.self)
+//                    mustBeCombined(with: Codable.self)
+                    mustBeCodable()
                     cantBeCombined(with: UnTagged.self)
                 },
                 else: AggregatedDiagnosticProducer {

@@ -31,7 +31,7 @@ struct CodedAtEnumTests {
                 .init(
                     id: CodedAt.misuseID,
                     message:
-                        "@CodedAt must be used in combination with @Codable",
+                        "@CodedAt must be used in combination with either @Codable, @Decodable or @Encodable",
                     line: 1, column: 1,
                     fixIts: [
                         .init(message: "Remove @CodedAt attribute")

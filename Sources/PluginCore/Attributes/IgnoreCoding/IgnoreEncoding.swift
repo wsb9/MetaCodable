@@ -58,7 +58,8 @@ package struct IgnoreEncoding: PropertyAttribute {
             shouldNotBeCombined(with: IgnoreCoding.self)
             `if`(
                 isStruct || isClass || isActor || isEnum || isProtocol,
-                mustBeCombined(with: Codable.self),
+//                mustBeCombined(with: Codable.self),
+                mustBeCodable(),
                 else: expect(syntaxes: IgnoreCoding.ignorableDeclarations)
             )
         }
