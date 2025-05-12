@@ -17,6 +17,8 @@ public struct DateCoder<Formatter: DateFormatConverter>: HelperCoder {
     /// The formatter to use for text format conversion.
     @usableFromInline
     internal let formatter: Formatter
+    
+    var safe: Bool
 
     /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// formatted date representation.
@@ -25,8 +27,9 @@ public struct DateCoder<Formatter: DateFormatConverter>: HelperCoder {
     /// represented in text format.
     ///
     /// - Parameter formatter: The date formatter to use.
-    public init(formatter: Formatter) {
+    public init(formatter: Formatter, safe: Bool = true) {
         self.formatter = formatter
+        self.safe = safe
     }
 
     /// Creates a new instance of `HelperCoder` that decodes/encodes
@@ -36,6 +39,7 @@ public struct DateCoder<Formatter: DateFormatConverter>: HelperCoder {
     /// represented in **ISO 8601** format.
     public init() where Formatter == ISO8601DateFormatter {
         self.formatter = Formatter()
+        self.safe = true
     }
 
     /// Decodes formatted date representation from the given `decoder`.
@@ -63,6 +67,47 @@ public struct DateCoder<Formatter: DateFormatConverter>: HelperCoder {
             )
         }
         return value
+    }
+    
+    public func decodeIfPresent(from decoder: any Decoder) throws -> Date? {
+        do {
+            return try decode(from: decoder)
+        } catch {
+            if safe {
+                return nil
+            } else {
+                throw error
+            }
+        }
+    }
+    
+    public func decodeIfPresent<DecodingContainer: KeyedDecodingContainerProtocol>(
+        from container: DecodingContainer,
+        forKey key: DecodingContainer.Key
+    ) throws -> Coded? {
+        let strValue = try container.decodeIfPresent(String.self, forKey: key)
+        guard let strValue else { return nil }
+        
+        do {
+            guard let value = formatter.date(from: strValue) else {
+                throw DecodingError.valueNotFound(
+                    Date.self,
+                    .init(
+                        codingPath: container.codingPath,
+                        debugDescription: """
+                            "\(strValue)" could not convert to Date by \(formatter)
+                            """
+                    )
+                )
+            }
+            return value
+        } catch {
+            if safe {
+                return nil
+            } else {
+                throw error
+            }
+        }
     }
 
     /// Encodes formatted date representation to the given `encoder`.
@@ -109,3 +154,5 @@ public protocol DateFormatConverter {
 
 extension DateFormatter: DateFormatConverter {}
 extension ISO8601DateFormatter: DateFormatConverter {}
+
+extension DateCoder: Sendable where Formatter: Sendable {}
